@@ -1,1 +1,44 @@
 # 张益帆 B21150215
+
+# Execution begins at address 0 
+	.pos 0
+	irmovq stack, %rsp  	# Set up stack pointer
+	call main		# Execute main program
+	halt			# Terminate program 
+
+# Sample linked list 
+.align 8 
+ele1: 
+.quad 0x00a 
+.quad ele2 
+ele2: 
+.quad 0x0b0 
+.quad ele3 
+ele3: 
+.quad 0xc00 
+.quad 0 
+
+main:   
+    irmovq ele1,%rdi
+	call sum		# sum(*linked_list)
+	ret
+
+# long sum(long *start)
+# start in %rdi
+sum:   
+    xorq %rax,%rax	     # sum = 0
+	andq %rdi,%rdi	     # check head node
+	jmp     test         # Goto test
+
+loop:
+    mrmovq (%rdi),%r10   # get node.data
+	addq %r10,%rax       # Add node.data to sum
+	mrmovq 8(%rdi),%rdi    # load node.next to rdi
+    andq %rdi,%rdi	     # check is null
+test:
+    jne    loop          # Stop when 0
+	ret                  # Return
+
+# Stack starts here and grows to lower addresses
+	.pos 0x200
+stack:
